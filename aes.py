@@ -140,15 +140,15 @@ def unpad(data):
 def encrypt_block(block, round_keys):
     state = [list(block[i:i + 4]) for i in range(0, 16, 4)]   #state matrix#
 
-    state = add_round_key(state, round_keys[:4]) #first round#
+    state = add_round_key(state, round_keys[:4]) # first round #
 
-    for r in range(1, 10):               #round2:11#
+    for r in range(1, 10):               # round 2:10 #
         state = sub_bytes(state)
         state = shift_rows(state)
         state = mix_columns(state)
         state = add_round_key(state, round_keys[4 * r:4 * (r + 1)]) 
 
-    state = sub_bytes(state)
+    state = sub_bytes(state) # round 11 without mixcolumns #
     state = shift_rows(state)
     state = add_round_key(state, round_keys[40:44])
 
@@ -158,15 +158,15 @@ def encrypt_block(block, round_keys):
 def decrypt_block(block, round_keys):
     state = [list(block[i:i + 4]) for i in range(0, 16, 4)]
 
-    state = add_round_key(state, round_keys[40:44])
+    state = add_round_key(state, round_keys[40:44])  # round 11 #
 
-    for r in range(9, 0, -1):
+    for r in range(9, 0, -1):   # round 10:2 #
         state = inv_shift_rows(state)
         state = inv_sub_bytes(state)
         state = add_round_key(state, round_keys[4 * r:4 * (r + 1)])
         state = inv_mix_columns(state)
 
-    state = inv_shift_rows(state)
+    state = inv_shift_rows(state) # round 1 without inverse mixcolumns #
     state = inv_sub_bytes(state)
     state = add_round_key(state, round_keys[:4])
 
